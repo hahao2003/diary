@@ -1260,20 +1260,15 @@ function loadKunkunProfile() {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       document.getElementById('ksName').value = data.name || '困困';
+      document.getElementById('ksNickname').value = data.nickname || '困困、小困';
+      document.getElementById('ksPetName').value = data.pet_name || '';
+      document.getElementById('ksGender').value = data.gender || '';
       document.getElementById('ksAge').value = data.age || '6';
-      document.getElementById('ksType').value = data.type || '粉红色毛绒小熊';
-      document.getElementById('ksOwner').value = data.owner || '噢零次';
-      
-      var traits = data.traits || [];
-      document.getElementById('ksTraits').value = traits.join('\n');
-      
+      document.getElementById('ksPersonality').value = data.personality_type || '';
+      document.getElementById('ksIdentity').value = data.identity || '';
+      document.getElementById('ksBackground').value = data.background || '';
+      document.getElementById('ksRelationship').value = data.relationship || '';
       document.getElementById('ksStyle').value = data.speaking_style || '';
-      
-      var likes = data.likes || [];
-      document.getElementById('ksLikes').value = likes.join('\u3001');
-      
-      document.getElementById('ksCustomPrompt').value = data.custom_prompt || '';
-      
       kunkunDefaultProfile = data;
     })
     .catch(function(e) {
@@ -1282,19 +1277,18 @@ function loadKunkunProfile() {
 }
 
 function saveKunkunProfile() {
-  var traits = document.getElementById('ksTraits').value.split('\n').filter(function(t) { return t.trim(); });
-  var likes = document.getElementById('ksLikes').value.split('\u3001').filter(function(l) { return l.trim(); });
-  
   var profile = {
     name: document.getElementById('ksName').value.trim() || '困困',
+    nickname: document.getElementById('ksNickname').value.trim() || '困困、小困',
+    pet_name: document.getElementById('ksPetName').value.trim() || '',
+    gender: document.getElementById('ksGender').value.trim() || '',
     age: document.getElementById('ksAge').value.trim() || '6',
-    type: document.getElementById('ksType').value.trim() || '毛绒小熊',
-    owner: document.getElementById('ksOwner').value.trim() || '噢零次',
-    parents: [document.getElementById('ksOwner').value.trim() || '噢零次', '噢一次'],
-    traits: traits,
-    speaking_style: document.getElementById('ksStyle').value.trim(),
-    likes: likes,
-    custom_prompt: document.getElementById('ksCustomPrompt').value.trim()
+    personality_type: document.getElementById('ksPersonality').value.trim() || '',
+    identity: document.getElementById('ksIdentity').value.trim() || '',
+    background: document.getElementById('ksBackground').value.trim() || '',
+    relationship: document.getElementById('ksRelationship').value.trim() || '',
+    speaking_style: document.getElementById('ksStyle').value.trim() || '',
+    likes: []
   };
   
   var btn = document.querySelector('.ks-actions .btn-primary');
@@ -1308,13 +1302,11 @@ function saveKunkunProfile() {
   })
   .then(function(r) { return r.json(); })
   .then(function() {
-    showToast('\u56F0\u56F0\u7684\u6027\u683C\u5DF2\u4FDD\u5B58\uFF01');
-    // Update header info
+    showToast('\u6027\u683C\u8BBE\u5B9A\u5DF2\u4FDD\u5B58\uFF01');
     var nameText = profile.name + ' \uD83D\uDDF8';
-    var descText = profile.type + ' \u2022 ' + profile.age + '\u5C81 \u2022 ' + (profile.likes[0] || '\u6700\u7231\u62B1\u62B1');
+    var descText = (profile.personality_type || profile.identity || '\u53EF\u7231\u7684\u5C0F\u5BB6\u4F19') + ' \u2022 ' + profile.age + '\u5C81';
     document.getElementById('kunkunHeaderName').textContent = nameText;
     document.getElementById('kunkunHeaderDesc').textContent = descText;
-    // Switch back to chat with new personality
     toggleKunkunSettings();
   })
   .catch(function(e) {
@@ -1322,7 +1314,7 @@ function saveKunkunProfile() {
   })
   .finally(function() {
     btn.disabled = false;
-    btn.textContent = '\uD83D\uDCBE \u4FDD\u5B58\u6027\u683C';
+    btn.textContent = '\uD83D\uDCBE \u4FDD\u5B58\u8BBE\u5B9A';
   });
 }
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>日记生成器</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="/static/style.css?v=1781609623" />
+<link rel="stylesheet" href="/static/style.css?v=1781609985" />
 </head>
 <body>
 
@@ -307,54 +307,73 @@
       </div>
       <!-- Settings panel -->
       <div class="kunkun-settings" id="kunkunSettings" style="display:none">
-        <div class="ks-title">&#x1F4DD; 困困的性格面板</div>
-        <div class="ks-hint">在这里调整困困的性格特征，改完点保存就会生效</div>
-        
+        <div class="ks-title">&#x2728; 角色性格面板</div>
+        <div class="ks-hint">在这里调整角色的性格设定，改完点保存就会生效</div>
+
         <div class="ks-section">
-          <div class="ks-label">&#x1F3F7; 基本信息</div>
+          <div class="ks-label">&#x1F3F7; 角色名称</div>
           <div class="ks-row">
             <div class="ks-field ks-half">
-              <label>名字</label>
-              <input type="text" id="ksName" value="困困">
+              <label>昵称</label>
+              <input type="text" id="ksNickname" placeholder="困困、小困">
             </div>
             <div class="ks-field ks-half">
-              <label>年龄</label>
-              <input type="text" id="ksAge" value="6">
+              <label>正式名</label>
+              <input type="text" id="ksName" placeholder="困困">
             </div>
           </div>
           <div class="ks-field">
-            <label>类型（小熊 / 恐龙 / 兔子...）</label>
-            <input type="text" id="ksType" value="粉红色毛绒小熊">
-          </div>
-          <div class="ks-field">
-            <label>主人</label>
-            <input type="text" id="ksOwner" value="噢零次">
+            <label>专属称呼（角色怎么叫你）</label>
+            <input type="text" id="ksPetName" placeholder="爸爸妈妈、主人、朋友...">
           </div>
         </div>
 
         <div class="ks-section">
-          <div class="ks-label">&#x2B50; 性格特征（每行一个）</div>
-          <textarea id="ksTraits" rows="4" placeholder="天真烂漫&#x0a;奶声奶气&#x0a;喜欢撒娇"></textarea>
+          <div class="ks-label">&#x1F9CC; 性别 / 年龄 / 气质类型</div>
+          <div class="ks-row">
+            <div class="ks-field ks-half">
+              <label>性别 / 类型</label>
+              <input type="text" id="ksGender" placeholder="无性别（小熊）">
+            </div>
+            <div class="ks-field ks-half">
+              <label>年龄</label>
+              <input type="text" id="ksAge" placeholder="6">
+            </div>
+          </div>
+          <div class="ks-field">
+            <label>气质类型</label>
+            <input type="text" id="ksPersonality" placeholder="天真烂漫、奶声奶气、活泼可爱">
+            <span class="help-text">示例：清冷、温柔、毒舌、少年、成熟、慵懒、天真、傲娇...</span>
+          </div>
+        </div>
+
+        <div class="ks-section">
+          <div class="ks-label">&#x1F3AC; 身份设定</div>
+          <div class="ks-field">
+            <input type="text" id="ksIdentity" placeholder="二次元人设：毛绒小熊 / 普通人 / 恋人 / 助手 / 虚拟伴侣...">
+          </div>
+        </div>
+
+        <div class="ks-section">
+          <div class="ks-label">&#x1F4D6; 背景简介（简短200字以内）</div>
+          <textarea id="ksBackground" rows="4" placeholder="角色的经历、性格成因、世界观..."></textarea>
+        </div>
+
+        <div class="ks-section">
+          <div class="ks-label">&#x1F91D; 用户与角色的关系</div>
+          <div class="ks-field">
+            <input type="text" id="ksRelationship" placeholder="孩子 / 主人 / 朋友 / 恋人 / 助手 / 师生 / 平等陌生人...">
+          </div>
         </div>
 
         <div class="ks-section">
           <div class="ks-label">&#x1F5E3;&#xFE0F; 说话风格</div>
-          <textarea id="ksStyle" rows="3" placeholder="描述困困的说话方式"></textarea>
-        </div>
-
-        <div class="ks-section">
-          <div class="ks-label">&#x1F497; 喜欢的（用、分隔）</div>
-          <input type="text" id="ksLikes" placeholder="被抱抱、举高高、和爸爸妈妈一起玩">
-        </div>
-
-        <div class="ks-section">
-          <div class="ks-label">&#x1F4CB; 自定义完整提示词（选填，填了会覆盖以上所有设置）</div>
-          <textarea id="ksCustomPrompt" rows="5" placeholder="如果填了这里，上面的名字、年龄、性格等设置都会被忽略，直接使用这个作为困困的系统提示词"></textarea>
+          <textarea id="ksStyle" rows="3" placeholder="描述角色的说话方式、常用语气词、口头禅..."></textarea>
         </div>
 
         <div class="ks-actions">
-          <button class="btn-secondary" onclick="resetKunkunProfile()">&#x1F504; 恢复默认</button>
-          <button class="btn-primary" onclick="saveKunkunProfile()">&#x1F4BE; 保存性格</button>
+          <button class="btn-secondary" onclick="resetKunkunProfile()">&#x1F504; 恢复默认（困困）</button>
+          <button class="btn-primary" onclick="saveKunkunProfile()">&#x1F4BE; 保存设定</button>
         </div>
       </div>
       <div class="kunkun-messages" id="kunkunMessages"></div>
@@ -484,6 +503,6 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="/static/app.js?v=1781609623"></script>
+<script src="/static/app.js?v=1781609985"></script>
 </body>
 </html>
