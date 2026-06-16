@@ -514,7 +514,7 @@ def api_save_diary():
     if meeting_num > 0:
         header = f"{date_display}第{meeting_num}次见面"
     else:
-        header = f"{date_display}不懂呢
+        header = f"{date_display}不懂呢"
     body = full_text.strip()
 
     new_entry = {
