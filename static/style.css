@@ -182,7 +182,7 @@ html, body {
 
 /* ===== Form ===== */
 .diary-form {
-  max-width: 640px;
+  max-width: 100%;
 }
 
 .form-section {
@@ -204,6 +204,7 @@ html, body {
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .form-row:last-child {
@@ -212,6 +213,7 @@ html, body {
 
 .form-group {
   flex: 1;
+  min-width: 0;
   margin-bottom: 16px;
 }
 
