@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>日记生成器</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="/static/style.css?v=1781607366" />
+<link rel="stylesheet" href="/static/style.css?v=1781608751" />
 </head>
 <body>
 
@@ -36,6 +36,10 @@
       <button class="nav-item" data-tab="stats" onclick="switchTab('stats')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         统计
+      </button>
+      <button class="nav-item" data-tab="kunkun" onclick="switchTab('kunkun')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        困困
       </button>
       <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -290,6 +294,26 @@
     </div>
   </main>
 
+  <!-- Tab: 困困 Chat -->
+  <main class="main" id="tab-kunkun" style="display:none">
+    <div class="kunkun-container">
+      <div class="kunkun-header">
+        <div class="kunkun-avatar">&#x1F43B;&#xFE0F;</div>
+        <div class="kunkun-header-info">
+          <div class="kunkun-name">困困 &#x1F9F8;</div>
+          <div class="kunkun-desc">粉色小熊 &#x2022; 6岁 &#x2022; 最爱抱抱</div>
+        </div>
+      </div>
+      <div class="kunkun-messages" id="kunkunMessages"></div>
+      <div class="kunkun-input-area">
+        <input type="text" id="kunkunInput" placeholder="跟困困说句话吧～" autocomplete="off">
+        <button id="kunkunSendBtn" onclick="sendKunkunMessage()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
   <!-- Tab: Settings -->
   <main class="main" id="tab-settings" style="display:none">
     <header class="page-header">
@@ -407,6 +431,6 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="/static/app.js?v=1781607366"></script>
+<script src="/static/app.js?v=1781608751"></script>
 </body>
 </html>

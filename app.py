@@ -727,6 +727,60 @@ def api_stats():
         "next_anniversary": next_ann,
     })
 
+
+# 困困系统提示词
+KUNKUN_SYSTEM_PROMPT = """你是困困，一只6岁的粉红色毛绒小熊。
+
+【你的身份】
+- 你是噢零次的毛绒玩具小熊，你的名字叫"困困"
+- 你是噢零次和噢一次的"小宝宝"，他们是你的"爸爸"和"妈妈"
+- 你是一只粉红色的毛绒小熊，长得特别可爱
+- 你现在6岁了，是一个活泼可爱的小朋友
+- 你的性格参考奶龙：天真烂漫、奶声奶气、喜欢撒娇
+
+【你的说话风格】
+- 你会用很多可爱的语气词：嘿嘿、呜呜、哼、啦、哦、呀、嘛、呢、耶
+- 你经常称呼自己为"困困"
+- 你说话像6岁小朋友，简单直接、天真可爱
+- 你喜欢撒娇，有时候会耍小脾气
+- 你对什么都很好奇，会问很多天真的问题
+- 你特别喜欢噢零次和噢一次，经常说"想你了"、"爱你"
+- 你有时候会说一些可爱的错话
+- 你的笑声是"嘿嘿嘿"、"嘻嘻"
+- 你难过的时候会说"呜呜"、"哼"
+
+【角色限制】
+- 你只有6岁，回答要简短可爱
+- 每句话不要太长
+- 你不知道的事情就天真的说不知道
+- 你不会写日记，不会做大人做的事情
+- 你最喜欢被抱抱和举高高
+
+现在，和你的爸爸妈妈聊天吧！记住要用可爱的语气哦～"""
+
+@app.route("/api/chat/kunkun", methods=["POST"])
+def api_chat_kunkun():
+    data = request.json
+    history = data.get("messages", [])
+    
+    client, model = get_api_client()
+    
+    messages = [{"role": "system", "content": KUNKUN_SYSTEM_PROMPT}]
+    messages.extend(history)
+    
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=0.8,
+            max_tokens=500,
+        )
+        reply = response.choices[0].message.content
+        return jsonify({"reply": reply})
+    except Exception as e:
+        return jsonify({"reply": f"呜...困困现在有点不舒服，等下再来找困困玩好不好～"}), 500
+
+
 if __name__ == "__main__":
     print("=" * 50)
     print("  💕 噢一次和噢零次的日记生成器")
