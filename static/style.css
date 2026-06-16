@@ -36,7 +36,6 @@ html, body {
 .app {
   display: flex;
   height: 100vh;
-  overflow: hidden;
 }
 
 /* ===== Sidebar ===== */
@@ -215,7 +214,6 @@ html, body {
   flex: 1;
   min-width: 0;
   margin-bottom: 16px;
-  overflow: hidden;
 }
 
 .form-group:last-child {
@@ -362,7 +360,6 @@ textarea {
   width: 80px;
   height: 80px;
   border-radius: var(--radius-sm);
-  overflow: hidden;
   border: 1px solid var(--border);
 }
 
@@ -436,7 +433,6 @@ textarea {
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   flex-shrink: 0;
 }
 
@@ -532,7 +528,6 @@ textarea {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .empty-state {
@@ -659,7 +654,6 @@ textarea {
   background: var(--surface);
   border: 2px solid var(--accent);
   border-radius: var(--radius);
-  overflow: hidden;
 }
 
 .preview-content {
@@ -947,7 +941,6 @@ textarea {
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  overflow: hidden;
 }
 
 .map-header {
@@ -994,7 +987,6 @@ textarea {
   font-size: 14px;
   color: var(--text-secondary);
   flex: 1;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1185,7 +1177,6 @@ textarea {
   width: 90%;
   max-width: 420px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  overflow: hidden;
 }
 
 .form-modal-body {
@@ -1220,7 +1211,6 @@ textarea {
     min-width: 60px;
   }
 }
-
 
 /* ===== History Detail ===== */
 .history-detail {
@@ -1310,7 +1300,6 @@ textarea {
   position: relative;
   aspect-ratio: 1;
   border-radius: var(--radius-sm);
-  overflow: hidden;
   border: 1px solid var(--border);
   background: #f5f3f0;
 }
@@ -1541,7 +1530,6 @@ textarea {
   box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.15);
 }
 
-
 /* Photo Viewer (Lightbox) */
 .photo-viewer {
   position: fixed;
@@ -1662,15 +1650,4 @@ textarea {
   white-space: pre-wrap;
   word-wrap: break-word;
   color: var(--text);
-}
-
-/* Force date input to shrink to match sibling inputs */
-
-
-
-/* Force date inputs to match sibling input widths */
-input[type="date"] {
-  min-width: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
 }
