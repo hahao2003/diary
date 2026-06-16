@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>日记生成器</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="/static/style.css?v=1781605986" />
+<link rel="stylesheet" href="/static/style.css?v=1781606139" />
 </head>
 <body>
 
@@ -67,7 +67,7 @@
       <section class="form-section">
         <h2 class="section-title">基本信息</h2>
         <div class="form-row">
-          <div class="form-group">
+          <div class="form-group" style="flex:0 0 150px">
             <label for="meetingDate">日期</label>
             <input type="date" id="meetingDate" required>
           </div>
@@ -76,7 +76,7 @@
             <input type="number" id="meetingCount" min="1" placeholder="不记得可以不填">
             <span class="help-text">不记得第几次了？空着也行</span>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="flex:0 0 180px">
             <label for="lastMeetingDate">上次见面日期</label>
             <input type="date" id="lastMeetingDate">
             <span class="help-text" id="meetingGap"></span>
@@ -403,6 +403,6 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="/static/app.js?v=1781252345"></script>
+<script src="/static/app.js?v=1781606139"></script>
 </body>
 </html>
