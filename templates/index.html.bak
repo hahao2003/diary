@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日记生成器</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="/static/style.css?v=1781170661" />
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo" onclick="window.location.href='/'" style="cursor:pointer">
+      <span class="logo-icon">&#x1F48C;</span>
+      <span class="logo-text">噢零次 &amp; 噢一次</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-tab="write" onclick="switchTab('write')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        写日记
+      </button>
+      <button class="nav-item" data-tab="history" onclick="switchTab('history')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        历史日记
+      </button>
+      <button class="nav-item" data-tab="photowall" onclick="switchTab('photowall')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        照片墙
+      </button>
+      <button class="nav-item" data-tab="anniversaries" onclick="switchTab('anniversaries')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        纪念日
+      </button>
+      <button class="nav-item" data-tab="stats" onclick="switchTab('stats')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        统计
+      </button>
+      <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        设置
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+    <div class="copyright">u00A9 2026 Jim</div>
+      <span class="badge" id="meetingBadge">第0次</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main" id="tab-write">
+    <header class="page-header">
+      <h1>写日记</h1>
+      <p class="subtitle">按时间顺序填写今天去了哪些地方、做了什么</p>
+    </header>
+
+    <!-- Settings Notice -->
+    <div class="settings-notice" id="settingsNotice" style="display:none">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>请先在设置中配置 API Key 才能生成日记</span>
+      <button onclick="switchTab('settings')">去设置</button>
+    </div>
+
+    <form id="diaryForm" class="diary-form" onsubmit="return false">
+      <!-- Section: Basic Info -->
+      <section class="form-section">
+        <h2 class="section-title">基本信息</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="meetingDate">日期</label>
+            <input type="date" id="meetingDate" required>
+          </div>
+          <div class="form-group">
+            <label for="meetingCount">第几次见面</label>
+            <input type="number" id="meetingCount" min="1" placeholder="不记得可以不填">
+            <span class="help-text">不记得第几次了？空着也行</span>
+          </div>
+          <div class="form-group">
+            <label for="lastMeetingDate">上次见面日期</label>
+            <input type="date" id="lastMeetingDate">
+            <span class="help-text" id="meetingGap"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>天气</label>
+            <div class="option-grid">
+              <button type="button" class="option-btn" data-value="☀️ 晴" onclick="selectOption(this,'weather')"><span>☀️</span> 晴</button>
+              <button type="button" class="option-btn" data-value="🌥 阴" onclick="selectOption(this,'weather')"><span>🌥</span> 阴</button>
+              <button type="button" class="option-btn" data-value="🌧 雨" onclick="selectOption(this,'weather')"><span>🌧</span> 雨</button>
+              <button type="button" class="option-btn" data-value="🌬 风" onclick="selectOption(this,'weather')"><span>🌬</span> 风</button>
+              <button type="button" class="option-btn" data-value="❄️ 雪" onclick="selectOption(this,'weather')"><span>❄️</span> 雪</button>
+              <button type="button" class="option-btn" data-value="☀️ 阴晴不定" onclick="selectOption(this,'weather')"><span>☀️</span> 阴晴不定</button>
+            </div>
+            <input type="hidden" id="weather" value="">
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section: Locations -->
+      <section class="form-section">
+        <h2 class="section-title">今日行程 <span class="label-hint">（按时间顺序）</span></h2>
+        <div id="locationContainer"></div>
+        <button type="button" class="btn-add-location" onclick="addLocation()">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          添加地点
+        </button>
+      </section>
+
+      <!-- Section: Photos -->
+      <section class="form-section">
+        <h2 class="section-title">照片</h2>
+        <div class="form-group">
+          <label>上传今天的照片</label>
+          <div class="photo-upload">
+            <input type="file" id="photoInput" accept="image/*" multiple hidden>
+            <div class="upload-area" onclick="document.getElementById('photoInput').click()">
+              <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>点击上传照片</span>
+            </div>
+            <div class="photo-previews" id="photoPreviews"></div>
+          </div>
+          <div class="form-group" id="photoDescriptionGroup" style="display:none">
+            <label for="photoDescription">照片里有什么？（可选，不写 AI 也会看照片）</label>
+            <textarea id="photoDescription" rows="2" placeholder="比如：我们在海边拍了合照、吃了很漂亮的甜品……"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Generate Button -->
+      <div class="form-actions">
+        <button type="button" class="btn-primary" id="generateBtn" onclick="generateDiary()" disabled>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          预览日记
+        </button>
+      </div>
+    </form>
+
+    <!-- Preview Section -->
+    <div class="preview-section" id="previewSection" style="display:none">
+      <header class="preview-header">
+        <h2>✍️ 日记预览</h2>
+        <p class="subtitle">看看 AI 生成的日记，满意了再保存</p>
+      </header>
+      <div class="preview-card">
+        <div class="preview-content" id="previewContent" contenteditable="true"></div>
+        <div class="correction-section" id="correctionSection">
+          <label for="correctionInput">需要修改什么？<span class="label-hint">（可选，空的就直接重新生成）</span></label>
+          <textarea id="correctionInput" rows="2" placeholder="比如：把麦当劳改成肯德基、加一段关于逛街的描述……"></textarea>
+          <div class="preview-actions">
+            <button type="button" class="btn-primary" onclick="confirmSave()">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              确认保存
+            </button>
+            <button type="button" class="btn-secondary" onclick="regenerateDiary()">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              重新生成
+            </button>
+            <button type="button" class="btn-secondary" onclick="regenerateWithCorrection()">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              纠错后生成
+            </button>
+            <button type="button" class="btn-secondary" onclick="copyPreview()">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              复制
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Tab: History -->
+  <main class="main" id="tab-history" style="display:none">
+    <header class="page-header">
+      <h1>历史日记</h1>
+      <p class="subtitle">你写过的每一篇日记</p>
+    </header>
+    <div id="historyList" class="history-list">
+      <p class="empty-state">加载中...</p>
+    </div>
+    <div id="historyDetail" class="history-detail" style="display:none">
+      <button type="button" class="btn-secondary" onclick="closeHistoryDetail()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        返回列表
+      </button>
+      <div class="history-detail-card">
+        <div class="history-detail-content" id="historyDetailContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Tab: Photo Wall -->
+  <main class="main" id="tab-photowall" style="display:none">
+    <header class="page-header">
+      <h1>&#x1F4F8; 照片墙</h1>
+      <p class="subtitle">记录我们的每一个瞬间</p>
+    </header>
+    <div class="photowall-upload">
+      <div class="form-row">
+        <div class="form-group form-group-sm">
+          <label for="pwDate">日期</label>
+          <input type="date" id="pwDate">
+        </div>
+        <div class="form-group form-group-sm" style="display:flex;align-items:flex-end">
+          <button type="button" class="btn-primary btn-sm" onclick="document.getElementById('pwFileInput').click()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            选择照片
+          </button>
+          <input type="file" id="pwFileInput" accept="image/*" hidden onchange="uploadPhotoWall(this)">
+        </div>
+      </div>
+    </div>
+    <div id="photowallList" class="photowall-list">
+      <p class="empty-state">还没有照片，选好日期上传吧</p>
+    </div>
+  </main>
+
+  <!-- Tab: Anniversaries -->
+  <main class="main" id="tab-anniversaries" style="display:none">
+    <header class="page-header">
+      <h1>&#x1F49D; 我们的纪念日</h1>
+      <p class="subtitle">记录属于我们的每一个重要日子</p>
+    </header>
+    <div class="anniversary-countdown" id="annCountdown" style="display:none">
+      <div class="ann-countdown-icon">&#x1F49D;</div>
+      <div class="ann-countdown-info">
+        <div class="ann-countdown-name" id="annCountName"></div>
+        <div class="ann-countdown-date" id="annCountDate"></div>
+      </div>
+      <div class="ann-countdown-days" id="annCountDays"></div>
+    </div>
+    <div class="anniversary-controls">
+      <button type="button" class="btn-primary btn-sm" onclick="showAnniversaryForm()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        添加纪念日
+      </button>
+    </div>
+    <div id="anniversaryList" class="anniversary-list">
+      <p class="empty-state">还没有纪念日，点击上方按钮添加</p>
+    </div>
+  </main>
+
+  <!-- Anniversary Form Modal -->
+  <div class="map-overlay" id="annFormOverlay" style="display:none" onclick="if(event.target===this)closeAnniversaryForm()">
+    <div class="form-modal" onclick="event.stopPropagation()">
+      <div class="map-header">
+        <h3>添加纪念日</h3>
+        <button type="button" class="btn-close-map" onclick="closeAnniversaryForm()">&times;</button>
+      </div>
+      <div class="form-modal-body">
+        <div class="form-group">
+          <label for="annName">纪念的事</label>
+          <input type="text" id="annName" placeholder="比如：第一次见面、在一起100天...">
+        </div>
+        <div class="form-group">
+          <label for="annDate">日期</label>
+          <input type="date" id="annDate">
+        </div>
+      </div>
+      <div class="form-modal-footer">
+        <button type="button" class="btn-primary" onclick="saveAnniversary()">保存</button>
+        <button type="button" class="btn-secondary" onclick="closeAnniversaryForm()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Stats -->
+  <main class="main" id="tab-stats" style="display:none">
+    <header class="page-header">
+      <h1>&#x1F4CA; 恋爱统计</h1>
+      <p class="subtitle">我们的恋爱数据</p>
+    </header>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-number" id="statDiaries">-</div><div class="stat-label">&#x1F4DD; 日记</div></div>
+      <div class="stat-card"><div class="stat-number" id="statPhotos">-</div><div class="stat-label">&#x1F4F8; 照片</div></div>
+      <div class="stat-card"><div class="stat-number" id="statMeetings">-</div><div class="stat-label">&#x1F48D; 见面</div></div>
+      <div class="stat-card"><div class="stat-number" id="statStreak">-</div><div class="stat-label">&#x1F525; 连续</div></div>
+    </div>
+
+    <div class="streak-section">
+      <h2 class="section-title">&#x1F4C5; 写日记日历</h2>
+      <div class="streak-grid" id="streakGrid"></div>
+    </div>
+  </main>
+
+  <!-- Tab: Settings -->
+  <main class="main" id="tab-settings" style="display:none">
+    <header class="page-header">
+      <h1>设置</h1>
+      <p class="subtitle">配置 AI 模型和 API</p>
+    </header>
+    <form class="settings-form" onsubmit="return false">
+      <section class="form-section">
+        <h2 class="section-title">API 配置</h2>
+        <div class="form-group">
+          <label for="apiKey">API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-..." class="input-lg">
+        </div>
+        <div class="form-group">
+          <label for="baseUrl">API 地址</label>
+          <input type="url" id="baseUrl" value="https://api.openai.com/v1" placeholder="https://api.openai.com/v1">
+        </div>
+        <div class="form-group">
+          <label for="modelName">模型</label>
+          <input type="text" id="modelName" value="gpt-4o" placeholder="gpt-4o / deepseek-chat">
+          <span class="help-text">支持 OpenAI 兼容接口，例如 DeepSeek 填 deepseek-chat</span>
+        </div>
+      </section>
+      <div class="form-actions">
+        <button type="button" class="btn-primary" onclick="saveSettings()">保存设置</button>
+        <span class="save-status" id="saveStatus"></span>
+      </div>
+    </form>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Location Template -->
+<template id="locationTemplate">
+  <div class="location-block">
+    <div class="location-header">
+      <span class="location-number">地点 <span class="loc-idx">1</span></span>
+      <button type="button" class="btn-remove-location" onclick="removeLocation(this)" title="删除此地点">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="form-row">
+      <div class="form-group form-group-sm" style="flex:0 0 120px">
+        <label>时间（选填）</label>
+        <input type="time" class="loc-time">
+      </div>
+      <div class="form-group form-group-sm">
+        <label>地点</label>
+        <input type="text" class="loc-name" placeholder="例如：天河城、祖庙、香港...">
+        <span class="map-trigger" onclick="openMap(this)">&#x1F5FA; 在地图上选</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>怎么去的这里</label>
+      <div class="option-grid">
+        <button type="button" class="option-btn" data-value="走路" onclick="selectTransport(this)"><span>&#x1F6B6;</span> 走路</button>
+        <button type="button" class="option-btn" data-value="地铁" onclick="selectTransport(this)"><span>&#x1F687;</span> 地铁</button>
+        <button type="button" class="option-btn" data-value="城际" onclick="selectTransport(this)"><span>&#x1F684;</span> 城际</button>
+        <button type="button" class="option-btn" data-value="高铁" onclick="selectTransport(this)"><span>&#x1F685;</span> 高铁</button>
+        <button type="button" class="option-btn" data-value="单车" onclick="selectTransport(this)"><span>&#x1F6B2;</span> 单车</button>
+        <button type="button" class="option-btn" data-value="打车" onclick="selectTransport(this)"><span>&#x1F695;</span> 打车</button>
+        <button type="button" class="option-btn" data-value="开车" onclick="selectTransport(this)"><span>&#x1F697;</span> 开车</button>
+        <button type="button" class="option-btn" data-value="公交" onclick="selectTransport(this)"><span>&#x1F68C;</span> 公交</button>
+      </div>
+      <input type="hidden" class="loc-transport" value="">
+    </div>
+    <div class="form-group">
+      <label>和谁去的这里</label>
+      <div class="option-grid">
+        <button type="button" class="option-btn" data-value="一起" onclick="selectWho(this)"><span>&#x1F491;</span> 一起</button>
+        <button type="button" class="option-btn" data-value="噢一次" onclick="selectWho(this)"><span>&#x1F60A;</span> 噢一次</button>
+        <button type="button" class="option-btn" data-value="噢零次" onclick="selectWho(this)"><span>&#x1F618;</span> 噢零次</button>
+      </div>
+      <input type="hidden" class="loc-who" value="">
+    </div>
+    <div class="form-group">
+      <label>在这里做了什么</label>
+      <textarea class="loc-activity" rows="1" placeholder="散步、逛街、看电影……"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group form-group-sm">
+        <label>吃了什么</label>
+        <textarea class="loc-food" rows="1" placeholder="寿司郎、麦当劳……"></textarea>
+      </div>
+      <div class="form-group form-group-sm">
+        <label>逛了什么 / 买了什么</label>
+        <textarea class="loc-shopping" rows="1" placeholder="Gap、KKV……"></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>有什么好玩的 / 甜蜜的瞬间？</label>
+      <textarea class="loc-fun" rows="1" placeholder="比如：说了什么甜蜜的话、有什么搞笑的事……"></textarea>
+    </div>
+    <div class="form-group">
+      <label>有什么不开心 / 遗憾的事？</label>
+      <textarea class="loc-regret" rows="1" placeholder="比如：没吃到想吃的东西、时间太短了……"></textarea>
+    </div>
+  </div>
+</template>
+
+<!-- Map Modal -->
+<div class="map-overlay" id="mapOverlay" onclick="closeMap(event)" style="display:none">
+  <div class="map-modal" onclick="event.stopPropagation()">
+    <div class="map-header">
+      <h3>选择地点</h3>
+      <button type="button" class="btn-close-map" onclick="closeMap()">&times;</button>
+    </div>
+    <div id="mapContainer"></div>
+    <div class="map-footer">
+      <span id="mapSelectedName">点击地图选择地点</span>
+      <button type="button" class="btn-primary btn-sm" onclick="confirmMapLocation()" disabled id="confirmMapBtn">确认选择</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/app.js?v=1781170661"></script>
+</body>
+</html>

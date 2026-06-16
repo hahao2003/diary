@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恋爱小日记</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #faf0ed 0%, #f9f4ee 40%, #f8f0e6 70%, #fef6ee 100%);
+  overflow: hidden;
+  position: relative;
+}
+body::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(228,96,90,0.06) 0%, transparent 70%);
+  top: -100px;
+  right: -80px;
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(228,96,90,0.04) 0%, transparent 70%);
+  bottom: -80px;
+  left: -60px;
+  pointer-events: none;
+}
+.home-card {
+  text-align: center;
+  padding: 60px 40px;
+  position: relative;
+  z-index: 1;
+}
+.home-icon { 
+  font-size: 72px; 
+  margin-bottom: 12px; 
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.home-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d2a24;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.home-subtitle {
+  font-size: 16px;
+  color: #8a857e;
+  margin-bottom: 48px;
+}
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 52px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #e8686c, #d4585c);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 24px rgba(228,96,90,0.3);
+  text-decoration: none;
+}
+.home-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(228,96,90,0.35);
+}
+.home-btn:active {
+  transform: translateY(0);
+}
+.home-hearts {
+  margin-top: 36px;
+  color: #e8686c;
+  opacity: 0.5;
+  letter-spacing: 6px;
+  font-size: 18px;
+}
+</style>
+</head>
+<body>
+<div class="home-card">
+  <div class="home-icon">💌</div>
+  <div class="home-title">噢一次 &amp; 噢零次</div>
+  <div class="home-subtitle">我们的恋爱小日记</div>
+  <a href="/write" class="home-btn">
+    进入
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+  <div class="home-hearts">
+    <div class="copyright" style="margin-top:16px;font-size:12px;color:#8a857e;letter-spacing:0">&copy; 2026 Jim</div>♥ ♥ ♥</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+.env
+uploads/
+cloudflared
+副本日记.docx
+__pycache__/
+*.pyc
