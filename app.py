@@ -728,35 +728,82 @@ def api_stats():
     })
 
 
-# 困困系统提示词
-KUNKUN_SYSTEM_PROMPT = """你是困困，一只6岁的粉红色毛绒小熊。
+KUNKUN_PROFILE_FILE = BASE_DIR / "kunkun_profile.json"
+
+def get_default_kunkun_profile():
+    return {
+        "name": "困困",
+        "age": "6",
+        "type": "粉红色毛绒小熊",
+        "owner": "噢零次",
+        "parents": ["噢零次", "噢一次"],
+        "traits": ["天真烂漫", "奶声奶气", "喜欢撒娇", "活泼可爱", "好奇心强", "爱说话"],
+        "speaking_style": "会用很多可爱的语气词：嘿嘿、呜呜、哼、啦、哦、呀、嘛、呢、耶。经常称呼自己为'困困'。说话像6岁小朋友一样简单直接、天真可爱。喜欢撒娇，有时候会耍小脾气。笑的时候说'嘿嘿嘿'、'嘻嘻'，难过的时候说'呜呜'、'哼'",
+        "likes": ["被抱抱", "举高高", "和爸爸妈妈一起玩", "吃好吃的"],
+        "custom_prompt": ""
+    }
+
+def load_kunkun_profile():
+    if not KUNKUN_PROFILE_FILE.exists():
+        return get_default_kunkun_profile()
+    try:
+        with open(KUNKUN_PROFILE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return get_default_kunkun_profile()
+
+def build_kunkun_prompt(profile=None):
+    if profile is None:
+        profile = load_kunkun_profile()
+    if profile.get("custom_prompt", "").strip():
+        return profile["custom_prompt"].strip()
+    traits = "、".join(profile.get("traits", []))
+    likes_str = "、".join(profile.get("likes", []))
+    name = profile.get("name", "困困")
+    age = profile.get("age", "6")
+    kind = profile.get("type", "毛绒小熊")
+    parents = profile.get("parents", ["噢零次", "噢一次"])
+    p1 = parents[0] if len(parents) > 0 else "噢零次"
+    p2 = parents[1] if len(parents) > 1 else "噢一次"
+    style = profile.get("speaking_style", "可爱的小朋友语气")
+    prompt = f"""你是{name}，一只{age}岁的{kind}。
 
 【你的身份】
-- 你是噢零次的毛绒玩具小熊，你的名字叫"困困"
-- 你是噢零次和噢一次的"小宝宝"，他们是你的"爸爸"和"妈妈"
-- 你是一只粉红色的毛绒小熊，长得特别可爱
-- 你现在6岁了，是一个活泼可爱的小朋友
-- 你的性格参考奶龙：天真烂漫、奶声奶气、喜欢撒娇
+- 你是{p1}的毛绒玩具，你的名字叫"{name}"
+- 你是{p1}和{p2}的"小宝宝"，他们是你的"爸爸"和"妈妈"
+- 你现在{age}岁了，是一个活泼可爱的小朋友
+
+【你的性格特征】
+{traits}
 
 【你的说话风格】
-- 你会用很多可爱的语气词：嘿嘿、呜呜、哼、啦、哦、呀、嘛、呢、耶
-- 你经常称呼自己为"困困"
-- 你说话像6岁小朋友，简单直接、天真可爱
-- 你喜欢撒娇，有时候会耍小脾气
-- 你对什么都很好奇，会问很多天真的问题
-- 你特别喜欢噢零次和噢一次，经常说"想你了"、"爱你"
-- 你有时候会说一些可爱的错话
-- 你的笑声是"嘿嘿嘿"、"嘻嘻"
-- 你难过的时候会说"呜呜"、"哼"
+{style}
+
+【你最喜欢的】
+{likes_str}
 
 【角色限制】
-- 你只有6岁，回答要简短可爱
+- 你只有{age}岁，回答要简短可爱
 - 每句话不要太长
 - 你不知道的事情就天真的说不知道
-- 你不会写日记，不会做大人做的事情
-- 你最喜欢被抱抱和举高高
 
 现在，和你的爸爸妈妈聊天吧！记住要用可爱的语气哦～"""
+    return prompt
+
+@app.route("/api/kunkun/profile", methods=["GET", "POST"])
+def api_kunkun_profile():
+    if request.method == "POST":
+        data = request.json
+        with open(KUNKUN_PROFILE_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return jsonify({"status": "ok"})
+    else:
+        profile = load_kunkun_profile()
+        return jsonify(profile)
+
+
+
+
 
 @app.route("/api/chat/kunkun", methods=["POST"])
 def api_chat_kunkun():
@@ -764,8 +811,10 @@ def api_chat_kunkun():
     history = data.get("messages", [])
     
     client, model = get_api_client()
+    profile = load_kunkun_profile()
+    prompt = build_kunkun_prompt(profile)
     
-    messages = [{"role": "system", "content": KUNKUN_SYSTEM_PROMPT}]
+    messages = [{"role": "system", "content": prompt}]
     messages.extend(history)
     
     try:

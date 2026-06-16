@@ -1815,3 +1815,101 @@ textarea {
 .kunkun-input-area button:disabled {
   opacity: 0.5;
 }
+
+/* ===== 困困 性格设置面板 ===== */
+.kunkun-settings {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #fcf8f5;
+  border: 1px solid var(--border);
+  border-top: none;
+}
+.ks-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.ks-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.ks-section {
+  margin-bottom: 18px;
+}
+.ks-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.ks-row {
+  display: flex;
+  gap: 12px;
+}
+.ks-half {
+  flex: 1;
+}
+.ks-field {
+  margin-bottom: 10px;
+}
+.ks-field label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.ks-field input,
+.ks-field textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  box-sizing: border-box;
+}
+.ks-field input:focus,
+.ks-field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(232, 104, 108, 0.1);
+}
+.ks-field textarea {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+}
+.ks-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.ks-actions .btn-primary,
+.ks-actions .btn-secondary {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.kunkun-settings-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.kunkun-settings-btn:hover {
+  background: #fff;
+}

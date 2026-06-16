@@ -1225,3 +1225,117 @@ function sendKunkunMessage() {
   });
 }
 
+
+// ===== 困困 性格设置 =====
+var kunkunDefaultProfile = null;
+
+function toggleKunkunSettings() {
+  var settings = document.getElementById('kunkunSettings');
+  var messages = document.getElementById('kunkunMessages');
+  var inputArea = document.querySelector('.kunkun-input-area');
+  var btn = document.getElementById('kunkunSettingsBtn');
+  
+  if (settings.style.display !== 'none') {
+    // Switch to chat
+    settings.style.display = 'none';
+    messages.style.display = '';
+    inputArea.style.display = '';
+    btn.innerHTML = '\u2699\uFE0F';
+    // Reload profile (in case it was changed elsewhere)
+    kunkunMessages = [];
+    kunkunLoaded = false;
+    loadKunkunChat();
+  } else {
+    // Switch to settings
+    settings.style.display = 'block';
+    messages.style.display = 'none';
+    inputArea.style.display = 'none';
+    btn.innerHTML = '\uD83D\uDCAC';
+    loadKunkunProfile();
+  }
+}
+
+function loadKunkunProfile() {
+  fetch('/api/kunkun/profile')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      document.getElementById('ksName').value = data.name || '困困';
+      document.getElementById('ksAge').value = data.age || '6';
+      document.getElementById('ksType').value = data.type || '粉红色毛绒小熊';
+      document.getElementById('ksOwner').value = data.owner || '噢零次';
+      
+      var traits = data.traits || [];
+      document.getElementById('ksTraits').value = traits.join('\n');
+      
+      document.getElementById('ksStyle').value = data.speaking_style || '';
+      
+      var likes = data.likes || [];
+      document.getElementById('ksLikes').value = likes.join('\u3001');
+      
+      document.getElementById('ksCustomPrompt').value = data.custom_prompt || '';
+      
+      kunkunDefaultProfile = data;
+    })
+    .catch(function(e) {
+      console.error('Failed to load kunkun profile:', e);
+    });
+}
+
+function saveKunkunProfile() {
+  var traits = document.getElementById('ksTraits').value.split('\n').filter(function(t) { return t.trim(); });
+  var likes = document.getElementById('ksLikes').value.split('\u3001').filter(function(l) { return l.trim(); });
+  
+  var profile = {
+    name: document.getElementById('ksName').value.trim() || '困困',
+    age: document.getElementById('ksAge').value.trim() || '6',
+    type: document.getElementById('ksType').value.trim() || '毛绒小熊',
+    owner: document.getElementById('ksOwner').value.trim() || '噢零次',
+    parents: [document.getElementById('ksOwner').value.trim() || '噢零次', '噢一次'],
+    traits: traits,
+    speaking_style: document.getElementById('ksStyle').value.trim(),
+    likes: likes,
+    custom_prompt: document.getElementById('ksCustomPrompt').value.trim()
+  };
+  
+  var btn = document.querySelector('.ks-actions .btn-primary');
+  btn.disabled = true;
+  btn.textContent = '\u4FDD\u5B58\u4E2D...';
+  
+  fetch('/api/kunkun/profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(profile),
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    showToast('\u56F0\u56F0\u7684\u6027\u683C\u5DF2\u4FDD\u5B58\uFF01');
+    // Update header info
+    var nameText = profile.name + ' \uD83D\uDDF8';
+    var descText = profile.type + ' \u2022 ' + profile.age + '\u5C81 \u2022 ' + (profile.likes[0] || '\u6700\u7231\u62B1\u62B1');
+    document.getElementById('kunkunHeaderName').textContent = nameText;
+    document.getElementById('kunkunHeaderDesc').textContent = descText;
+    // Switch back to chat with new personality
+    toggleKunkunSettings();
+  })
+  .catch(function(e) {
+    showToast('\u4FDD\u5B58\u5931\u8D25\uFF1A' + e.message);
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = '\uD83D\uDCBE \u4FDD\u5B58\u6027\u683C';
+  });
+}
+
+function resetKunkunProfile() {
+  if (!confirm('\u786E\u5B9A\u8981\u6062\u590D\u56F0\u56F0\u7684\u9ED8\u8BA4\u6027\u683C\u5417\uFF1F')) return;
+  
+  fetch('/api/kunkun/reset', { method: 'POST' })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      loadKunkunProfile();
+      showToast('\u5DF2\u6062\u590D\u9ED8\u8BA4\u6027\u683C');
+    })
+    .catch(function(e) {
+      showToast('\u6062\u590D\u5931\u8D25\uFF1A' + e.message);
+    });
+}
