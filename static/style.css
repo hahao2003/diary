@@ -245,6 +245,7 @@ input[type="password"],
 input[type="url"],
 textarea {
   width: 100%;
+  min-width: 0;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
