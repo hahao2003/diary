@@ -123,7 +123,7 @@ def build_generation_prompt(user_input, diary_corpus):
 
 用户的日记风格特征：
 1. 用户称呼自己为"噢零次"（偶尔也会用"我"），称呼女友为"噢一次"
-2. 每篇以"月.日"开头，如果有提供第几次见面则加上"第N次见面"
+2. 如果用户提供了第几次见面，则以"月.日 第N次见面"开头；如果用户没提供第几次见面，标题就只写"月.日"，千万不要自己推断第几次见面，也不要写"第N次见面"
 3. 语言口语化、温暖、俏皮，常用"嘿嘿"、"呜呜"、"哼"、"真的是"、"啦"、"哦"、"呀"
 4. 会描写具体的行程：去了哪、吃了什么、买了什么，尤其是吃的部分非常重要且详细
 5. 会记录两人之间甜蜜、搞笑的小细节——这是日记的灵魂！
@@ -145,7 +145,7 @@ def build_generation_prompt(user_input, diary_corpus):
 - 如果用户提供了"好玩的事"细节，请重点展开描写
 - 结尾要有不舍或期待下一次见面的感觉
 - 不要在前面加"这是为你生成的日记"之类的开场白
-- 直接以日期和第N次见面开头"""
+- 如果用户提供了第几次见面，以"月.日 第N次见面"开头；如果用户没提供第几次见面，绝对不要写第几次见面，直接以"月.日"开头，千万不要自己推断一个数字"""
 
     return system_prompt, user_input
 
@@ -514,7 +514,7 @@ def api_save_diary():
     if meeting_num > 0:
         header = f"{date_display}第{meeting_num}次见面"
     else:
-        header = date_display
+        header = f"{date_display}不懂呢
     body = full_text.strip()
 
     new_entry = {

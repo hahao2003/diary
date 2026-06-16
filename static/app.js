@@ -472,7 +472,7 @@ function formatHistoryBody(body) {
     html += '<div class="hf-info-title">\u270f\ufe0f \u586b\u5199\u7684\u4fe1\u606f</div>';
     html += '<div class="hf-info-grid">';
     if (basicInfo.date) html += '<div class="hf-info-item"><span class="hf-info-label">\u65e5\u671f</span><span class="hf-info-value">' + basicInfo.date + '</span></div>';
-    if (basicInfo.meeting) html += '<div class="hf-info-item"><span class="hf-info-label">\u89c1\u9762</span><span class="hf-info-value">\u7b2c' + basicInfo.meeting + '\u6b21</span></div>';
+    if (basicInfo.meeting && basicInfo.meeting !== '\uff08\u672a\u586b\u5199\uff09') html += '<div class="hf-info-item"><span class="hf-info-label">\u89c1\u9762</span><span class="hf-info-value">\u7b2c' + basicInfo.meeting + '\u6b21</span></div>'; else if (basicInfo.meeting) html += '<div class="hf-info-item"><span class="hf-info-label">\u89c1\u9762</span><span class="hf-info-value">\u4e0d\u61c2\u5462</span></div>';
     if (basicInfo.weather) html += '<div class="hf-info-item"><span class="hf-info-label">\u5929\u6c14</span><span class="hf-info-value">' + basicInfo.weather + '</span></div>';
     if (basicInfo.transport && basicInfo.transport !== '\u672a\u586b\u5199') html += '<div class="hf-info-item"><span class="hf-info-label">\u4ea4\u901a</span><span class="hf-info-value">' + basicInfo.transport + '</span></div>';
     if (basicInfo.photoDesc) html += '<div class="hf-info-item hf-info-full"><span class="hf-info-label">\u7167\u7247</span><span class="hf-info-value">' + basicInfo.photoDesc + '</span></div>';
