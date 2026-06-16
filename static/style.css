@@ -1662,3 +1662,9 @@ textarea {
   word-wrap: break-word;
   color: var(--text);
 }
+
+/* Force date input to shrink to match sibling inputs */
+#meetingDate {
+  min-width: 0;
+  max-width: 100%;
+}
