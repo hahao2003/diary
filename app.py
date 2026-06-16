@@ -730,4 +730,4 @@ if __name__ == "__main__":
     print("  💕 噢一次和噢零次的日记生成器")
     print("  打开浏览器访问 http://localhost:5000")
     print("=" * 50)
-    app.run(debug=True, port=5002, host="0.0.0.0")
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5002)))
