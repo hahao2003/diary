@@ -215,6 +215,7 @@ html, body {
   flex: 1;
   min-width: 0;
   margin-bottom: 16px;
+  overflow: hidden;
 }
 
 .form-group:last-child {
@@ -1664,7 +1665,12 @@ textarea {
 }
 
 /* Force date input to shrink to match sibling inputs */
-#meetingDate {
-  min-width: 0;
-  max-width: 100%;
+
+
+
+/* Force date inputs to match sibling input widths */
+input[type="date"] {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
